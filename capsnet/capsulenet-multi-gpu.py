@@ -14,12 +14,17 @@ Result:
 Author: Xifeng Guo, E-mail: `guoxifeng1990@163.com`, Github: `https://github.com/XifengGuo/CapsNet-Keras`
 """
 
+import os
+import argparse
+
 import tensorflow as tf
 from tensorflow import keras
+import numpy as np
+
+from capsnet.capsulenet import CapsNet, margin_loss, load_mnist, manipulate_latent, test
+from capsnet.utils import plot_log
 
 keras.backend.set_image_data_format('channels_last')
-
-from capsulenet import CapsNet, margin_loss, load_mnist, manipulate_latent, test
 
 
 def train(model, data, args):
@@ -67,19 +72,13 @@ def train(model, data, args):
                         callbacks=[log, tb, lr_decay])
     # End: Training with data augmentation -----------------------------------------------------------------------#
 
-    from utils import plot_log
     plot_log(args.save_dir + '/log.csv', show=True)
 
     return model
 
 
 if __name__ == "__main__":
-    import numpy as np
-    import tensorflow as tf
-    import os
-
     # setting the hyper parameters
-    import argparse
     parser = argparse.ArgumentParser(description="Capsule Network on MNIST.")
     parser.add_argument('--epochs', default=50, type=int)
     parser.add_argument('--batch_size', default=300, type=int)

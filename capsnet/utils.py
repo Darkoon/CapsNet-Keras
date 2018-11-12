@@ -1,8 +1,10 @@
-import numpy as np
-from matplotlib import pyplot as plt
 import csv
 import math
+
 import pandas
+import numpy as np
+from matplotlib import pyplot as plt
+
 
 def plot_log(filename, show=True):
 
@@ -51,6 +53,3 @@ def combine_images(generated_images, height=None, width=None):
 
 if __name__=="__main__":
     plot_log('result/log.csv')
-
-
-
