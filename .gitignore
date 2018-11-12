@@ -1,7 +1,14 @@
+# IDEs
 .idea
+*.swp
+
+# System dependencies
+.DS_Store
+
+# Python related
 __pycache__
-*.h5
-*.sh
-result/*
-!result/*.png
 venv
+
+# Other
+*.h5
+result/*

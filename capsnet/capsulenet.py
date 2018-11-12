@@ -16,14 +16,17 @@ Result:
 Author: Xifeng Guo, E-mail: `guoxifeng1990@163.com`, Github: `https://github.com/XifengGuo/CapsNet-Keras`
 """
 
+import os
+import argparse
+
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 from PIL import Image
 
-from capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
-from utils import combine_images
+from capsnet.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
+from capsnet.utils import combine_images, plot_log
 
 keras.backend.set_image_data_format('channels_last')
 
@@ -141,7 +144,6 @@ def train(model, data, args):
     model.save_weights(args.save_dir + '/trained_model.h5')
     print('Trained model saved to \'%s/trained_model.h5\'' % args.save_dir)
 
-    from utils import plot_log
     plot_log(args.save_dir + '/log.csv', show=True)
 
     return model
@@ -200,9 +202,6 @@ def load_mnist():
 
 
 if __name__ == "__main__":
-    import os
-    import argparse
-
     # setting the hyper parameters
     parser = argparse.ArgumentParser(description="Capsule Network on MNIST.")
     parser.add_argument('--epochs', default=50, type=int)
