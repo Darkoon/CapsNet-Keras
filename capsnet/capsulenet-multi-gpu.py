@@ -48,7 +48,7 @@ def train(model, args):
     
     # Training
     model.fit_generator(generator=mnist.get_train_generator(args.batch_size),
-                        steps_per_epoch=int(mnist.TEST_SIZE / args.batch_size),
+                        steps_per_epoch=int(mnist.TRAIN_SIZE / args.batch_size),
                         epochs=args.epochs,
                         validation_data=mnist.get_validation_data(),
                         callbacks=[log, tb, lr_decay])
