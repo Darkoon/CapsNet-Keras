@@ -25,7 +25,7 @@ import tensorflow as tf
 from tensorflow import keras
 from PIL import Image
 
-import dataset
+from dataset import mnist
 from capsnet.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
 from capsnet.utils import combine_images, plot_log
 
@@ -116,10 +116,10 @@ def train(model, args):
                   metrics={'capsnet': 'accuracy'})
 
     # Training
-    model.fit_generator(generator=dataset.get_mnist_train_generator(args.batch_size),
-                        steps_per_epoch=int(dataset.MNIST_TRAIN_SIZE / args.batch_size),
+    model.fit_generator(generator=mnist.get_train_generator(args.batch_size),
+                        steps_per_epoch=int(mnist.TRAIN_SIZE / args.batch_size),
                         epochs=args.epochs,
-                        validation_data=dataset.get_mnist_validation_data(),
+                        validation_data=mnist.get_validation_data(),
                         callbacks=[log, tb, checkpoint, lr_decay])
 
     model.save_weights(args.save_dir + '/trained_model.h5')
@@ -131,7 +131,7 @@ def train(model, args):
 
 
 def test(model, args):
-    x_test, y_test = dataset.get_mnist_test_data()
+    x_test, y_test = mnist.get_test_data()
     y_pred, x_recon = model.predict(x_test, batch_size=100)
     print('-'*30 + 'Begin: test' + '-'*30)
     print('Test acc:', np.sum(np.argmax(y_pred, 1) == np.argmax(y_test, 1))/y_test.shape[0])
@@ -148,7 +148,7 @@ def test(model, args):
 
 def manipulate_latent(model, args):
     print('-'*30 + 'Begin: manipulate' + '-'*30)
-    x_test, y_test = dataset.get_mnist_test_data()
+    x_test, y_test = mnist.get_test_data()
     index = np.argmax(y_test, 1) == args.digit
     number = np.random.randint(low=0, high=sum(index) - 1)
     x, y = x_test[index][number], y_test[index][number]
@@ -184,8 +184,6 @@ if __name__ == "__main__":
                         help="The coefficient for the loss of decoder")
     parser.add_argument('-r', '--routings', default=3, type=int,
                         help="Number of iterations used in routing algorithm. should > 0")
-    parser.add_argument('--shift_fraction', default=0.1, type=float,
-                        help="Fraction of pixels to shift at most in each direction.")
     parser.add_argument('--debug', action='store_true',
                         help="Save weights by TensorBoard")
     parser.add_argument('--save_dir', default='./result')
@@ -202,8 +200,8 @@ if __name__ == "__main__":
         os.makedirs(args.save_dir)
 
     # define model
-    model, eval_model, manipulate_model = CapsNet(input_shape=dataset.MNIST_IMAGE_SHAPE,
-                                                  n_class=dataset.MNIST_CLASSES,
+    model, eval_model, manipulate_model = CapsNet(input_shape=mnist.IMAGE_SHAPE,
+                                                  n_class=mnist.CLASSES,
                                                   routings=args.routings)
     model.summary()
 
