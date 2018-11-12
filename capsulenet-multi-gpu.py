@@ -14,10 +14,10 @@ Result:
 Author: Xifeng Guo, E-mail: `guoxifeng1990@163.com`, Github: `https://github.com/XifengGuo/CapsNet-Keras`
 """
 
-from keras import optimizers
-from keras import backend as K
+import tensorflow as tf
+from tensorflow import keras
 
-K.set_image_data_format('channels_last')
+keras.backend.set_image_data_format('channels_last')
 
 from capsulenet import CapsNet, margin_loss, load_mnist, manipulate_latent, test
 
@@ -34,13 +34,13 @@ def train(model, data, args):
     (x_train, y_train), (x_test, y_test) = data
 
     # callbacks
-    log = callbacks.CSVLogger(args.save_dir + '/log.csv')
-    tb = callbacks.TensorBoard(log_dir=args.save_dir + '/tensorboard-logs',
-                               batch_size=args.batch_size, histogram_freq=args.debug)
-    lr_decay = callbacks.LearningRateScheduler(schedule=lambda epoch: args.lr * (0.9 ** epoch))
+    log = keras.callbacks.CSVLogger(args.save_dir + '/log.csv')
+    tb = keras.callbacks.TensorBoard(log_dir=args.save_dir + '/tensorboard-logs',
+                                     batch_size=args.batch_size, histogram_freq=args.debug)
+    lr_decay = keras.callbacks.LearningRateScheduler(schedule=lambda epoch: args.lr * (0.9 ** epoch))
 
     # compile the model
-    model.compile(optimizer=optimizers.Adam(lr=args.lr),
+    model.compile(optimizer=keras.optimizers.Adam(lr=args.lr),
                   loss=[margin_loss, 'mse'],
                   loss_weights=[1., args.lam_recon])
 
@@ -52,8 +52,8 @@ def train(model, data, args):
 
     # Begin: Training with data augmentation ---------------------------------------------------------------------#
     def train_generator(x, y, batch_size, shift_fraction=0.):
-        train_datagen = ImageDataGenerator(width_shift_range=shift_fraction,
-                                           height_shift_range=shift_fraction)  # shift up to 2 pixel for MNIST
+        train_datagen = keras.preprocessing.image.ImageDataGenerator(width_shift_range=shift_fraction,
+                                                                     height_shift_range=shift_fraction)  # shift up to 2 pixel for MNIST
         generator = train_datagen.flow(x, y, batch_size=batch_size)
         while 1:
             x_batch, y_batch = generator.next()
@@ -77,10 +77,6 @@ if __name__ == "__main__":
     import numpy as np
     import tensorflow as tf
     import os
-    from keras.preprocessing.image import ImageDataGenerator
-    from keras import callbacks
-    from keras.utils.vis_utils import plot_model
-    from keras.utils import multi_gpu_model
 
     # setting the hyper parameters
     import argparse
@@ -119,14 +115,13 @@ if __name__ == "__main__":
                                                       n_class=len(np.unique(np.argmax(y_train, 1))),
                                                       routings=args.routings)
     model.summary()
-    plot_model(model, to_file=args.save_dir+'/model.png', show_shapes=True)
 
     # train or test
     if args.weights is not None:  # init the model weights with provided one
         model.load_weights(args.weights)
     if not args.testing:
         # define muti-gpu model
-        multi_model = multi_gpu_model(model, gpus=args.gpus)
+        multi_model = keras.utils.multi_gpu_model(model, gpus=args.gpus)
         train(model=multi_model, data=((x_train, y_train), (x_test, y_test)), args=args)
         model.save_weights(args.save_dir + '/trained_model.h5')
         print('Trained model saved to \'%s/trained_model.h5\'' % args.save_dir)
@@ -135,4 +130,3 @@ if __name__ == "__main__":
         if args.weights is None:
             print('No weights are provided. Will test using random initialized weights.')
         manipulate_latent(manipulate_model, (x_test, y_test), args)
-        test(model=eval_model, data=(x_test, y_test), args=args)
