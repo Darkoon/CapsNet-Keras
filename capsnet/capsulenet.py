@@ -116,10 +116,10 @@ def train(model, args):
                   metrics={'capsnet': 'accuracy'})
 
     # Training
-    model.fit_generator(generator=mnist.get_train_generator(args.batch_size),
+    model.fit_generator(generator=mnist.get_train_generator_for_capsnet(args.batch_size),
                         steps_per_epoch=int(mnist.TRAIN_SIZE / args.batch_size),
                         epochs=args.epochs,
-                        validation_data=mnist.get_validation_data(),
+                        validation_data=mnist.get_validation_data_for_capsnet(),
                         callbacks=[log, tb, checkpoint, lr_decay])
 
     model.save_weights(args.save_dir + '/trained_model.h5')
