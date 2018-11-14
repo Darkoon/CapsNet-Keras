@@ -23,7 +23,7 @@ def _load_data():
     return (x_train, y_train), (x_test, y_test)
 
 
-def get_train_generator(batch_size):
+def get_train_generator_for_cnn(batch_size):
     (x_train, y_train), (_, _) = _load_data()
 
     config = {
@@ -38,11 +38,21 @@ def get_train_generator(batch_size):
 
     while 1:
         x_batch, y_batch = generator.next()
+        yield [x_batch, y_batch]
+
+
+def get_train_generator_for_capsnet(batch_size):
+    for (x_batch, y_batch) in get_train_generator_for_cnn(batch_size):
         yield ([x_batch, y_batch], [y_batch, x_batch])
 
 
-def get_validation_data():
+def get_validation_data_for_cnn():
     (_, _), (x_test, y_test) = _load_data()
+    return [x_test, y_test]
+
+
+def get_validation_data_for_capsnet():
+    x_test, y_test = get_validation_data_for_cnn()
     return [[x_test, y_test], [y_test, x_test]]
 
 
