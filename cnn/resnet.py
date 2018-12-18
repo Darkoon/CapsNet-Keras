@@ -248,7 +248,7 @@ model.fit_generator(cifar10.get_train_generator_for_cnn(batch_size),
                     callbacks=callbacks)
 
 # Score trained model.
-x_test, y_test = cifar10.get_test_data()
+x_test, y_test = cifar10.get_test_data_for_cnn()
 scores = model.evaluate(x_test, y_test, verbose=1)
 print('Test loss:', scores[0])
 print('Test accuracy:', scores[1])

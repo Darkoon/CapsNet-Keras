@@ -1,3 +1,10 @@
+"""Evaluation script for both CapsNet and CNN models.
+
+Example use:
+
+    $ python evaluation/test.py --network-type=capsnet --weights=./result/weights-01.h5
+
+"""
 import argparse
 
 import numpy as np
@@ -10,9 +17,7 @@ CAPSNET_ROUTINGS = 3  # TODO: Allow to override it!
 
 def load_model(network_type, weights):
     if network_type == 'capsnet':
-        model, eval_model, _ = CapsNet(input_shape=cifar10.IMAGE_SHAPE,
-                                       n_class=cifar10.CLASSES,
-                                       routings=CAPSNET_ROUTINGS)
+        model, eval_model, _ = CapsNet(input_shape=cifar10.IMAGE_SHAPE, n_class=cifar10.CLASSES, routings=CAPSNET_ROUTINGS)
         model.summary()
         model.load_weights(weights)
         return model

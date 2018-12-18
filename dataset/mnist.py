@@ -71,8 +71,13 @@ def get_validation_data_for_capsnet():
     return [[x_validation, y_validation], [y_validation, x_validation]]
 
 
-def get_test_data(rotation=0.0):
+def get_test_data_for_cnn(rotation=0.0):
     (_, _), (_, _), (x_test, y_test) = _load_data()
     x_test = np.array([keras.preprocessing.image.apply_affine_transform(image, theta=rotation) for image in x_test])
     return (x_test, y_test)
+
+
+def get_test_data_for_capsnet(rotation=0.0):
+    x_test, y_test = get_test_data_for_cnn()
+    return [[x_test, y_test], [y_test, x_test]]
 
