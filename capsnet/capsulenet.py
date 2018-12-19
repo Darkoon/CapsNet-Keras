@@ -47,7 +47,7 @@ def CapsNet(input_shape, n_class, routings):
     conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=1, padding='valid', activation='relu', name='conv1')(x)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=8, n_channels=32, kernel_size=9, strides=2, padding='valid')
+    primarycaps = PrimaryCap(conv1, dim_capsule=16, n_channels=64, kernel_size=9, strides=2, padding='valid')
 
     # Layer 3: Capsule layer. Routing algorithm works here.
     digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=16, routings=routings,
@@ -180,7 +180,7 @@ if __name__ == "__main__":
                         help="Initial learning rate")
     parser.add_argument('--lr_decay', default=0.9, type=float,
                         help="The value multiplied by lr at each epoch. Set a larger value for larger epochs")
-    parser.add_argument('--lam_recon', default=0.392, type=float,
+    parser.add_argument('--lam_recon', default=1.563, type=float,
                         help="The coefficient for the loss of decoder")
     parser.add_argument('-r', '--routings', default=3, type=int,
                         help="Number of iterations used in routing algorithm. should > 0")
