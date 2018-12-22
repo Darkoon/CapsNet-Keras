@@ -7,6 +7,7 @@ Usage:
        python capsulenet.py
        python capsulenet.py --epochs 50
        python capsulenet.py --epochs 50 --routings 3
+       python capsulenet.py --primary_capsules=32 --number_of_primary_channels=16 --digit_capsules=16
        ... ...
        
 Result:
@@ -32,7 +33,7 @@ from capsnet.utils import combine_images, plot_log
 keras.backend.set_image_data_format('channels_last')
 
 
-def CapsNet(input_shape, n_class, routings):
+def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=16, digit_capsules=16):
     """
     A Capsule Network on CIFAR.
     :param input_shape: data shape, 3d, [width, height, channels]
@@ -47,11 +48,10 @@ def CapsNet(input_shape, n_class, routings):
     conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=1, padding='valid', activation='relu', name='conv1')(x)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=16, n_channels=64, kernel_size=9, strides=2, padding='valid')
+    primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
 
     # Layer 3: Capsule layer. Routing algorithm works here.
-    digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=16, routings=routings,
-                             name='digitcaps')(primarycaps)
+    digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=digit_capsules, routings=routings, name='digitcaps')(primarycaps)
 
     # Layer 4: This is an auxiliary layer to replace each capsule with its length. Just to match the true label's shape.
     # If using tensorflow, this will not be necessary. :)
@@ -64,7 +64,7 @@ def CapsNet(input_shape, n_class, routings):
 
     # Shared Decoder model in training and prediction
     decoder = keras.models.Sequential(name='decoder')
-    decoder.add(keras.layers.Dense(512, activation='relu', input_dim=16*n_class))
+    decoder.add(keras.layers.Dense(512, activation='relu', input_dim=digit_capsules*n_class))
     decoder.add(keras.layers.Dense(1024, activation='relu'))
     decoder.add(keras.layers.Dense(np.prod(input_shape), activation='sigmoid'))
     decoder.add(keras.layers.Reshape(target_shape=input_shape, name='out_recon'))
@@ -74,7 +74,7 @@ def CapsNet(input_shape, n_class, routings):
     eval_model = keras.models.Model(x, [out_caps, decoder(masked)])
 
     # manipulate model
-    noise = keras.layers.Input(shape=(n_class, 16))
+    noise = keras.layers.Input(shape=(n_class, digit_capsules))
     noised_digitcaps = keras.layers.Add()([digitcaps, noise])
     masked_noised_y = Mask()([noised_digitcaps, y])
     manipulate_model = keras.models.Model([x, y, noise], decoder(masked_noised_y))
@@ -176,9 +176,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Capsule Network on MNIST.")
     parser.add_argument('--epochs', default=50, type=int)
     parser.add_argument('--batch_size', default=100, type=int)
+    parser.add_argument('--primary_capsules', default=32, type=int)
+    parser.add_argument('--number_of_primary_channels', default=16, type=int)
+    parser.add_argument('--digit_capsules', default=16, type=int)
     parser.add_argument('--lr', default=0.001, type=float,
                         help="Initial learning rate")
-    parser.add_argument('--lr_decay', default=0.9, type=float,
+    parser.add_argument('--lr_decay', default=0.96, type=float,
                         help="The value multiplied by lr at each epoch. Set a larger value for larger epochs")
     parser.add_argument('--lam_recon', default=1.563, type=float,
                         help="The coefficient for the loss of decoder")
@@ -202,7 +205,10 @@ if __name__ == "__main__":
     # define model
     model, eval_model, manipulate_model = CapsNet(input_shape=cifar10.IMAGE_SHAPE,
                                                   n_class=cifar10.CLASSES,
-                                                  routings=args.routings)
+                                                  routings=args.routings,
+                                                  primary_capsules=args.primary_capsules,
+                                                  number_of_primary_channels=args.number_of_primary_channels,
+                                                  digit_capsules=args.digit_capsules)
     model.summary()
 
     # train or test
