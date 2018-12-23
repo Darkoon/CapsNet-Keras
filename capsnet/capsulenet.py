@@ -33,7 +33,7 @@ from capsnet.utils import combine_images, plot_log
 keras.backend.set_image_data_format('channels_last')
 
 
-def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=64, digit_capsules=8):
+def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=64, digit_capsules=9):
     """
     A Capsule Network on CIFAR.
     :param input_shape: data shape, 3d, [width, height, channels]
