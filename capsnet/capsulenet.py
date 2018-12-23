@@ -68,7 +68,7 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
 
     # Shared Decoder model in training and prediction
     decoder = keras.models.Sequential(name='decoder')
-    decoder.add(keras.layers.Dense(512, activation='relu'))
+    decoder.add(keras.layers.Dense(512, activation='relu')(masked))
     decoder.add(keras.layers.Dense(1024, activation='relu'))
     decoder.add(keras.layers.Dense(np.prod(input_shape), activation='relu'))
     decoder.add(keras.layers.Reshape(target_shape=input_shape, name='out_recon'))
