@@ -33,7 +33,7 @@ from capsnet.utils import combine_images, plot_log
 keras.backend.set_image_data_format('channels_last')
 
 
-def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=16, digit_capsules=16):
+def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=64, digit_capsules=16):
     """
     A Capsule Network on CIFAR.
     :param input_shape: data shape, 3d, [width, height, channels]
@@ -42,10 +42,14 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
     :return: Two Keras Models, the first one used for training, and the second one for evaluation.
             `eval_model` can also be used for training.
     """
+
+    conv_filters = 256
+    conv_kernel_size = 24
+
     x = keras.layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
-    conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=1, padding='valid', activation='relu', name='conv1')(x)
+    conv1 = keras.layers.Conv2D(filters=conv_filters, kernel_size=conv_kernel_size, strides=1, padding='valid', activation='relu', name='conv1')(x)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
     primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
