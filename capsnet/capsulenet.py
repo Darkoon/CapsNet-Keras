@@ -49,10 +49,10 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
     x = keras.layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
-    conv1 = keras.layers.Conv2D(filters=conv_filters, kernel_size=conv_kernel_size, strides=1, padding='valid', activation='relu', name='conv1')(x)
+    conv1 = keras.layers.Conv2D(filters=conv_filters, kernel_size=conv_kernel_size, strides=1, padding='valid', activation='relu', name='conv1', kernel_initializer="he_normal")(x)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
+    primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=digit_capsules, kernel_size=9, strides=2, padding='valid')
 
     # Layer 3: Capsule layer. Routing algorithm works here.
     digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=digit_capsules, routings=routings, name='digitcaps')(primarycaps)
@@ -68,7 +68,7 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
 
     # Shared Decoder model in training and prediction
     decoder = keras.models.Sequential(name='decoder')
-    decoder.add(keras.layers.Dense(512, activation='relu', input_dim=digit_capsules*n_class))
+    decoder.add(keras.layers.Dense(512, activation='relu'))
     decoder.add(keras.layers.Dense(1024, activation='relu'))
     decoder.add(keras.layers.Dense(np.prod(input_shape), activation='relu'))
     decoder.add(keras.layers.Reshape(target_shape=input_shape, name='out_recon'))
