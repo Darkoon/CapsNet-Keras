@@ -70,7 +70,7 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
     decoder = keras.models.Sequential(name='decoder')
     decoder.add(keras.layers.Dense(512, activation='relu', input_dim=digit_capsules*n_class))
     decoder.add(keras.layers.Dense(1024, activation='relu'))
-    decoder.add(keras.layers.Dense(np.prod(input_shape), activation='sigmoid'))
+    decoder.add(keras.layers.Dense(np.prod(input_shape), activation='relu'))
     decoder.add(keras.layers.Reshape(target_shape=input_shape, name='out_recon'))
 
     # Models for training and evaluation (prediction)
