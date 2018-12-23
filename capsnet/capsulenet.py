@@ -181,8 +181,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', default=50, type=int)
     parser.add_argument('--batch_size', default=100, type=int)
     parser.add_argument('--primary_capsules', default=32, type=int)
-    parser.add_argument('--number_of_primary_channels', default=16, type=int)
-    parser.add_argument('--digit_capsules', default=16, type=int)
+    parser.add_argument('--number_of_primary_channels', default=64, type=int)
+    parser.add_argument('--digit_capsules', default=9, type=int)
     parser.add_argument('--lr', default=0.001, type=float,
                         help="Initial learning rate")
     parser.add_argument('--lr_decay', default=0.96, type=float,
