@@ -39,7 +39,7 @@ def evaluate(network_type, weights):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Capsule Network on MNIST.")
+    parser = argparse.ArgumentParser(description='Evaluation of CNN and CapsNet networks against rotated images.')
     parser.add_argument('--network-type', required=True, type=str)
     parser.add_argument('--weights', required=True, type=str)
     args = parser.parse_args()
