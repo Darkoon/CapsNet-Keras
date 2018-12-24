@@ -204,10 +204,7 @@ if __name__ == "__main__":
     # define model
     model, eval_model, manipulate_model = CapsNet(input_shape=cifar10.IMAGE_SHAPE,
                                                   n_class=cifar10.CLASSES,
-                                                  routings=args.routings,
-                                                  primary_capsules=args.primary_capsules,
-                                                  number_of_primary_channels=args.number_of_primary_channels,
-                                                  digit_capsules=args.digit_capsules)
+                                                  routings=args.routings)
     model.summary()
 
     # train or test
