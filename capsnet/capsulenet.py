@@ -27,13 +27,13 @@ from tensorflow import keras
 from PIL import Image
 
 from dataset import cifar10
-from capsnet.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
+from capsnet.capsule_layers import CapsuleLayer, PrimaryCapsule, Length, Mask
 from capsnet.utils import combine_images, plot_log
 
 keras.backend.set_image_data_format('channels_last')
 
 
-def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=16, digit_capsules=16):
+def CapsNet(input_shape, n_class, routings, dense_size= (512, 1024)):
     """
     A Capsule Network on CIFAR.
     :param input_shape: data shape, 3d, [width, height, channels]
@@ -42,16 +42,19 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
     :return: Two Keras Models, the first one used for training, and the second one for evaluation.
             `eval_model` can also be used for training.
     """
+
+    target_shape = input_shape
+
     x = keras.layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
-    conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=1, padding='valid', activation='relu', name='conv1')(x)
+    conv1 = keras.layers.Conv2D(filters=256, kernel_size=24, strides=1, padding='valid', activation='relu', name='conv1', kernel_initializer="he_normal")(x)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
+    primarycaps = PrimaryCapsule(conv1, dim_vector=8, n_channels=64, kernel_size=9, strides=2, padding='valid')
 
     # Layer 3: Capsule layer. Routing algorithm works here.
-    digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=digit_capsules, routings=routings, name='digitcaps')(primarycaps)
+    digitcaps = CapsuleLayer(num_capsule=n_class, dim_vector=9, routings=routings, name='digitcaps')(primarycaps)
 
     # Layer 4: This is an auxiliary layer to replace each capsule with its length. Just to match the true label's shape.
     # If using tensorflow, this will not be necessary. :)
@@ -63,21 +66,17 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
     masked = Mask()(digitcaps)  # Mask using the capsule with maximal length. For prediction
 
     # Shared Decoder model in training and prediction
-    decoder = keras.models.Sequential(name='decoder')
-    decoder.add(keras.layers.Dense(512, activation='relu', input_dim=digit_capsules*n_class))
-    decoder.add(keras.layers.Dense(1024, activation='relu'))
-    decoder.add(keras.layers.Dense(np.prod(input_shape), activation='sigmoid'))
-    decoder.add(keras.layers.Reshape(target_shape=input_shape, name='out_recon'))
+    for i in range(1,len(dense_size)):
+        x_recon = keras.layers.Dense(dense_size[i],activation='relu')(x_recon)
+    # Is there any other way to do  
+    x_recon = keras.layers.Dense(target_shape[0]*target_shape[1]*target_shape[2],activation='relu')(x_recon)
+    x_recon = keras.layers.Reshape(target_shape=target_shape,name='output_recon')(x_recon)
 
     # Models for training and evaluation (prediction)
-    train_model = keras.models.Model([x, y], [out_caps, decoder(masked_by_y)])
-    eval_model = keras.models.Model(x, [out_caps, decoder(masked)])
+    train_model = keras.models.Model([x, y], [out_caps, x_recon])
+    eval_model = keras.models.Model(x, [out_caps, x_recon])
+    manipulate_model = keras.models.Model(x, [out_caps, x_recon])
 
-    # manipulate model
-    noise = keras.layers.Input(shape=(n_class, digit_capsules))
-    noised_digitcaps = keras.layers.Add()([digitcaps, noise])
-    masked_noised_y = Mask()([noised_digitcaps, y])
-    manipulate_model = keras.models.Model([x, y, noise], decoder(masked_noised_y))
     return train_model, eval_model, manipulate_model
 
 
