@@ -50,7 +50,10 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=16, number_of_prima
     conv1 = keras.layers.Activation('relu')(norm)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
+    primarycaps = PrimaryCap(conv1, dim_capsule=32, n_channels=16, kernel_size=3, strides=2, padding='valid', do_squash=False)
+
+    # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
+    primarycaps = PrimaryCap(primarycaps, dim_capsule=16, n_channels=16, kernel_size=3, strides=2, padding='valid')
 
     # Layer 3: Capsule layer. Routing algorithm works here.
     digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=digit_capsules, routings=routings, name='digitcaps')(primarycaps)

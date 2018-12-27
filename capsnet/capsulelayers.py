@@ -176,7 +176,7 @@ class CapsuleLayer(keras.layers.Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding):
+def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding, do_squash=True):
     """
     Apply Conv2D `n_channels` times and concatenate all capsules
     :param inputs: 4D tensor, shape=[None, width, height, channels]
@@ -185,7 +185,10 @@ def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding):
     :return: output tensor, shape=[None, num_capsule, dim_capsule]
     """
     output = keras.layers.Conv2D(filters=dim_capsule*n_channels, kernel_size=kernel_size, strides=strides, padding=padding,
-                                 name='primarycap_conv2d')(inputs)
+                                 )(inputs)
+
+    if not do_squash:
+        return output
 
     # We need to calculate desired shape manually due to changed TF/Keras API
     # keras.layers.Reshape now returns output shape [None, None, dim_capsule] instead [None, calculated_dim, dim_capsule]
