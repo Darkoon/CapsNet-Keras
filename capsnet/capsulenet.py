@@ -33,7 +33,7 @@ from capsnet.utils import combine_images, plot_log
 keras.backend.set_image_data_format('channels_last')
 
 
-def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_primary_channels=16, digit_capsules=16):
+def CapsNet(input_shape, n_class, routings, primary_capsules=16, number_of_primary_channels=32, digit_capsules=16):
     """
     A Capsule Network on CIFAR.
     :param input_shape: data shape, 3d, [width, height, channels]
@@ -45,7 +45,9 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
     x = keras.layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
-    conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=1, padding='valid', activation='relu', name='conv1')(x)
+    conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=2, padding='valid', name='conv1', kernel_regularizer=keras.regularizers.l2(1.e-4))(x)
+    norm = keras.layers.BatchNormalization(axis=3)(conv1)
+    conv1 = keras.layers.Activation('relu')(norm)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
     primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
@@ -64,7 +66,7 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=32, number_of_prima
 
     # Shared Decoder model in training and prediction
     decoder = keras.models.Sequential(name='decoder')
-    decoder.add(keras.layers.Dense(512, activation='relu', input_dim=digit_capsules*n_class))
+    decoder.add(keras.layers.Dense(1024, activation='relu', input_dim=digit_capsules*n_class))
     decoder.add(keras.layers.Dense(1024, activation='relu'))
     decoder.add(keras.layers.Dense(np.prod(input_shape), activation='sigmoid'))
     decoder.add(keras.layers.Reshape(target_shape=input_shape, name='out_recon'))
@@ -176,16 +178,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Capsule Network on MNIST.")
     parser.add_argument('--epochs', default=50, type=int)
     parser.add_argument('--batch_size', default=100, type=int)
-    parser.add_argument('--primary_capsules', default=32, type=int)
-    parser.add_argument('--number_of_primary_channels', default=16, type=int)
+    parser.add_argument('--primary_capsules', default=16, type=int)
+    parser.add_argument('--number_of_primary_channels', default=32, type=int)
     parser.add_argument('--digit_capsules', default=16, type=int)
-    parser.add_argument('--lr', default=0.001, type=float,
+    parser.add_argument('--lr', default=0.01, type=float,
                         help="Initial learning rate")
-    parser.add_argument('--lr_decay', default=0.96, type=float,
+    parser.add_argument('--lr_decay', default=0.99, type=float,
                         help="The value multiplied by lr at each epoch. Set a larger value for larger epochs")
-    parser.add_argument('--lam_recon', default=1.563, type=float,
+    parser.add_argument('--lam_recon', default=0.512, type=float,
                         help="The coefficient for the loss of decoder")
-    parser.add_argument('-r', '--routings', default=3, type=int,
+    parser.add_argument('-r', '--routings', default=9, type=int,
                         help="Number of iterations used in routing algorithm. should > 0")
     parser.add_argument('--debug', action='store_true',
                         help="Save weights by TensorBoard")
