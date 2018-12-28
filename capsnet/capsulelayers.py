@@ -184,8 +184,9 @@ def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding, d
     :param n_channels: the number of types of capsules
     :return: output tensor, shape=[None, num_capsule, dim_capsule]
     """
-    output = keras.layers.Conv2D(filters=dim_capsule*n_channels, kernel_size=kernel_size, strides=strides, padding=padding,
-                                 )(inputs)
+    conv = keras.layers.Conv2D(filters=dim_capsule*n_channels, kernel_size=kernel_size, strides=strides, padding=padding,
+                               kernel_regularizer=keras.regularizers.l2(1.e-4))(inputs)
+    output = keras.layers.BatchNormalization(axis=3)(conv)
 
     if not do_squash:
         return output
