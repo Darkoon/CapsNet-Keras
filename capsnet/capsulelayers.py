@@ -6,7 +6,7 @@ uncommenting them and commenting their counterparts.
 
 Author: Xifeng Guo, E-mail: `guoxifeng1990@163.com`, Github: `https://github.com/XifengGuo/CapsNet-Keras`
 """
-
+import math
 import tensorflow as tf
 from tensorflow import keras
 
@@ -176,7 +176,7 @@ class CapsuleLayer(keras.layers.Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding, do_squash=True):
+def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding, do_reshape=False):
     """
     Apply Conv2D `n_channels` times and concatenate all capsules
     :param inputs: 4D tensor, shape=[None, width, height, channels]
@@ -188,16 +188,21 @@ def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding, d
                                kernel_regularizer=keras.regularizers.l2(1.e-4))(inputs)
     output = keras.layers.BatchNormalization(axis=3)(conv)
 
-    if not do_squash:
-        return output
+    if not do_reshape:
+        conv_shape = output.get_shape()
+        shape = int(int(conv_shape[1]) * int(conv_shape[2]) * (int(conv_shape[3]) / dim_capsule))
+        desired_shape = [int(math.sqrt(shape)), int(math.sqrt(shape)), dim_capsule]
+        outputs = keras.layers.Reshape(target_shape=desired_shape, name='primarycap_reshape_1')(output)
+
+        return keras.layers.Lambda(squash, name='primarycap_squash_1')(outputs)
 
     # We need to calculate desired shape manually due to changed TF/Keras API
     # keras.layers.Reshape now returns output shape [None, None, dim_capsule] instead [None, calculated_dim, dim_capsule]
     conv_shape = output.get_shape()
     desired_shape = [int(int(conv_shape[1]) * int(conv_shape[2]) * (int(conv_shape[3]) / dim_capsule)), dim_capsule]
-    outputs = keras.layers.Reshape(target_shape=desired_shape, name='primarycap_reshape')(output)
+    outputs = keras.layers.Reshape(target_shape=desired_shape, name='primarycap_reshape_2')(output)
     
-    return keras.layers.Lambda(squash, name='primarycap_squash')(outputs)
+    return keras.layers.Lambda(squash, name='primarycap_squash_2')(outputs)
 
 
 """

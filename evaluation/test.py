@@ -10,16 +10,16 @@ import argparse
 import numpy as np
 
 from dataset import cifar10
-from cnn.resnet import resnet_v2
-from capsnet.capsulenet import CapsNet
 
 CAPSNET_ROUTINGS = 3  # TODO: Allow to override it!
 
 
 def evaluate(network_type, weights):
     if network_type == 'capsnet':
+        from capsnet.capsulenet import CapsNet
         model, eval_model, _ = CapsNet(input_shape=cifar10.IMAGE_SHAPE, n_class=cifar10.CLASSES, routings=CAPSNET_ROUTINGS)
     elif network_type == 'cnn':
+        from cnn.resnet import resnet_v2
         model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=12*9+2)
 
     model.summary()
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('--network-type', required=True, type=str)
     parser.add_argument('--weights', required=True, type=str)
     args = parser.parse_args()
+    print('args:', args)
 
     evaluate(args.network_type, args.weights)
 

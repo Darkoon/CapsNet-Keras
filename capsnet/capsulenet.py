@@ -45,15 +45,15 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=16, number_of_prima
     x = keras.layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
-    conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=2, padding='valid', name='conv1', kernel_regularizer=keras.regularizers.l2(1.e-4))(x)
+    conv1 = keras.layers.Conv2D(filters=256, kernel_size=5, strides=2, padding='valid', name='conv1', kernel_regularizer=keras.regularizers.l2(1.e-4))(x)
     norm = keras.layers.BatchNormalization(axis=3)(conv1)
     conv1 = keras.layers.Activation('relu')(norm)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=32, n_channels=32, kernel_size=3, strides=2, padding='valid', do_squash=False)
+    primarycaps = PrimaryCap(conv1, dim_capsule=32, n_channels=16, kernel_size=5, strides=2, padding='valid')
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(primarycaps, dim_capsule=16, n_channels=32, kernel_size=3, strides=2, padding='valid')
+    primarycaps = PrimaryCap(primarycaps, dim_capsule=32, n_channels=16, kernel_size=5, strides=2, padding='valid', do_reshape=True)
 
     # Layer 3: Capsule layer. Routing algorithm works here.
     digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=digit_capsules, routings=routings, name='digitcaps')(primarycaps)
