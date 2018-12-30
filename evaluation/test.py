@@ -10,16 +10,16 @@ import argparse
 import numpy as np
 
 from dataset import cifar10
-from cnn.resnet import resnet_v2
-from capsnet.capsulenet import CapsNet
 
 CAPSNET_ROUTINGS = 3  # TODO: Allow to override it!
 
 
 def evaluate(network_type, weights):
     if network_type == 'capsnet':
+        from capsnet.capsulenet import CapsNet
         model, eval_model, _ = CapsNet(input_shape=cifar10.IMAGE_SHAPE, n_class=cifar10.CLASSES, routings=CAPSNET_ROUTINGS)
     elif network_type == 'cnn':
+        from cnn.resnet import resnet_v2
         model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=12*9+2)
 
     model.summary()
@@ -32,8 +32,8 @@ def evaluate(network_type, weights):
             accuracy = np.sum(np.argmax(y_pred, 1) == np.argmax(y_test[0], 1))/y_test[0].shape[0]
         elif network_type == 'cnn':
             x_test, y_test = cifar10.get_test_data_for_cnn(rotation)
-            scores = model.evaluate(x_test, y_test, verbose=1)
-            accuracy = scores[1]
+            y_pred = model.predict(x_test, batch_size=100)
+            accuracy = np.sum(np.argmax(y_pred, 1) == np.argmax(y_test, 1))/y_test.shape[0]
 
         print('Rotation:', rotation, 'Accuracy:', accuracy)
 
