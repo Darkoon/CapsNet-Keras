@@ -27,8 +27,8 @@ from tensorflow import keras
 from PIL import Image
 
 from dataset import mnist
-from capsnet.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
-from capsnet.utils import combine_images, plot_log
+from capsnet.singledigitcapsule.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
+from capsnet.singledigitcapsule.utils import combine_images, plot_log
 
 keras.backend.set_image_data_format('channels_last')
 
