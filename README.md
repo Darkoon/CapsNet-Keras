@@ -23,13 +23,13 @@ $ python capsnet/singledigitcapsule/cifar_capsulenet.py
 - MNIST:
 
 ```bash
-$ python capsnet/twodigitcapsule/mnist_capsulenet.py
+$ python capsnet/twodigitcapsules/mnist_capsulenet.py
 ```
 
 - CIFAR10:
 
 ```bash
-$ python capsnet/twodigitcapsule/cifar_capsulenet.py
+$ python capsnet/twodigitcapsules/cifar_capsulenet.py
 ```
 
 #### ResNet 110

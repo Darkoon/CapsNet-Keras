@@ -4,10 +4,10 @@ The current version maybe only works for TensorFlow backend. Actually it will be
 Adopting to other backends should be easy, but I have not tested this. 
 
 Usage:
-       python capsnet/twodigitlayers/cifar_capsulenet.py
-       python capsnet/twodigitlayers/cifar_capsulenet.py --epochs 50
-       python capsnet/twodigitlayers/cifar_capsulenet.py --epochs 50 --routings 3
-       python capsnet/twodigitlayers/cifar_capsulenet.py --primary_capsules=32 --number_of_primary_channels=16 --digit_capsules=16
+       python capsnet/twodigitcapsules/cifar_capsulenet.py
+       python capsnet/twodigitcapsules/cifar_capsulenet.py --epochs 50
+       python capsnet/twodigitcapsules/cifar_capsulenet.py --epochs 50 --routings 3
+       python capsnet/twodigitcapsules/cifar_capsulenet.py --primary_capsules=32 --number_of_primary_channels=16 --digit_capsules=16
        ... ...
        
 Result:
@@ -27,8 +27,8 @@ from tensorflow import keras
 from PIL import Image
 
 from dataset import cifar10
-from capsnet.twodigitlayers.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
-from capsnet.twodigitlayers.utils import combine_images, plot_log
+from capsnet.twodigitcapsules.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
+from capsnet.twodigitcapsules.utils import combine_images, plot_log
 
 keras.backend.set_image_data_format('channels_last')
 
