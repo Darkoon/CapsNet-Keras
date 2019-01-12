@@ -199,7 +199,7 @@ def resnet_v2(input_shape, depth, num_classes=10):
     # v2 has BN-ReLU before Pooling
     x = keras.layers.BatchNormalization()(x)
     x = keras.layers.Activation('relu')(x)
-    x = keras.layers.AveragePooling2D(pool_size=8)(x)
+    x = keras.layers.AveragePooling2D(pool_size=7)(x)
     y = keras.layers.Flatten()(x)
     outputs = keras.layers.Dense(mnist.CLASSES,
                                  activation='softmax',
