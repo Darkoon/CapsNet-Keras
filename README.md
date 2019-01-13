@@ -48,6 +48,8 @@ $ python cnn/cifar_resnet.py
 
 ## Results on CIFAR10
 
+**BELOW VALUES WERE NOT PROCESSED YET!** We will put them into tables & graphs, don't worry! :)
+
 ### Rotations in training dataset
 
 #### CapsNet with single Digit Layer
@@ -138,7 +140,104 @@ Rotation: 45 Accuracy: 0.4304
 
 ## Results on MNIST
 
-Still in progres... :)
+### Rotations in training dataset
+
+#### CapsNet with single Digit Layer
+
+Weights are available [here](https://drive.google.com/open?id=1demuj6N_8PTQWs_vP0hvHFnCSRx8Udx3).
+
+```
+Rotation: -180 Accuracy: 0.4261
+Rotation: -165 Accuracy: 0.4236
+Rotation: -150 Accuracy: 0.4247
+Rotation: -135 Accuracy: 0.4011
+Rotation: -120 Accuracy: 0.3427
+Rotation: -105 Accuracy: 0.2936
+Rotation: -90 Accuracy: 0.3306
+Rotation: -75 Accuracy: 0.5177
+Rotation: -60 Accuracy: 0.802
+Rotation: -45 Accuracy: 0.9582
+Rotation: -30 Accuracy: 0.9901
+Rotation: -15 Accuracy: 0.993
+Rotation: 0 Accuracy: 0.9929
+Rotation: 15 Accuracy: 0.9919
+Rotation: 30 Accuracy: 0.989
+Rotation: 45 Accuracy: 0.9433
+Rotation: 60 Accuracy: 0.6914
+Rotation: 75 Accuracy: 0.3606
+Rotation: 90 Accuracy: 0.2284
+Rotation: 105 Accuracy: 0.2705
+Rotation: 120 Accuracy: 0.3785
+Rotation: 135 Accuracy: 0.4427
+Rotation: 150 Accuracy: 0.4572
+Rotation: 165 Accuracy: 0.444
+```
+
+#### CapsNet with two Digit Layers
+
+Weights are available [here](https://drive.google.com/open?id=1ODsS__IHprAVFhQpOiKCT3u6TqcwfLRG).
+
+```
+Rotation: -180 Accuracy: 0.4274
+Rotation: -165 Accuracy: 0.443
+Rotation: -150 Accuracy: 0.4343
+Rotation: -135 Accuracy: 0.4008
+Rotation: -120 Accuracy: 0.3155
+Rotation: -105 Accuracy: 0.2448
+Rotation: -90 Accuracy: 0.2548
+Rotation: -75 Accuracy: 0.4569
+Rotation: -60 Accuracy: 0.7752
+Rotation: -45 Accuracy: 0.944
+Rotation: -30 Accuracy: 0.9836
+Rotation: -15 Accuracy: 0.9899
+Rotation: 0 Accuracy: 0.9871
+Rotation: 15 Accuracy: 0.9913
+Rotation: 30 Accuracy: 0.9883
+Rotation: 45 Accuracy: 0.9483
+Rotation: 60 Accuracy: 0.7153
+Rotation: 75 Accuracy: 0.3844
+Rotation: 90 Accuracy: 0.235
+Rotation: 105 Accuracy: 0.2653
+Rotation: 120 Accuracy: 0.3577
+Rotation: 135 Accuracy: 0.423
+Rotation: 150 Accuracy: 0.4478
+Rotation: 165 Accuracy: 0.4369
+```
+
+#### Resnet 110
+
+Weights are available [here](https://drive.google.com/open?id=1AUH88BcE8OUE5rg9PdxNlnbXjo7Zh6Z7).
+
+```
+Rotation: -180 Accuracy: 0.4216
+Rotation: -165 Accuracy: 0.4307
+Rotation: -150 Accuracy: 0.4305
+Rotation: -135 Accuracy: 0.4181
+Rotation: -120 Accuracy: 0.3825
+Rotation: -105 Accuracy: 0.3649
+Rotation: -90 Accuracy: 0.4119
+Rotation: -75 Accuracy: 0.6214
+Rotation: -60 Accuracy: 0.8523
+Rotation: -45 Accuracy: 0.9673
+Rotation: -30 Accuracy: 0.9901
+Rotation: -15 Accuracy: 0.9951
+Rotation: 0 Accuracy: 0.9956
+Rotation: 15 Accuracy: 0.9961
+Rotation: 30 Accuracy: 0.9926
+Rotation: 45 Accuracy: 0.9654
+Rotation: 60 Accuracy: 0.7894
+Rotation: 75 Accuracy: 0.496
+Rotation: 90 Accuracy: 0.337
+Rotation: 105 Accuracy: 0.3524
+Rotation: 120 Accuracy: 0.3983
+Rotation: 135 Accuracy: 0.4316
+Rotation: 150 Accuracy: 0.4296
+Rotation: 165 Accuracy: 0.4226
+```
+
+### Without rotations in training dataset
+
+Still in progress... :)
 
 ## Used model implementations
 

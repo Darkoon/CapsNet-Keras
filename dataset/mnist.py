@@ -78,6 +78,6 @@ def get_test_data_for_cnn(rotation=0.0):
 
 
 def get_test_data_for_capsnet(rotation=0.0):
-    x_test, y_test = get_test_data_for_cnn()
+    x_test, y_test = get_test_data_for_cnn(rotation)
     return [[x_test, y_test], [y_test, x_test]]
 

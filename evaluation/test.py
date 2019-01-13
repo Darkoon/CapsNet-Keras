@@ -8,6 +8,7 @@ Example use:
 import argparse
 
 import numpy as np
+from tensorflow import keras
 
 from dataset import cifar10
 
@@ -32,7 +33,7 @@ def evaluate(dataset, network_type, weights):
         elif dataset == 'mnist' and network_type == 'capsnet_two_digits_capsules':
             from capsnet.twodigitcapsules.mnist_capsulenet import CapsNet
             model, _, _ = CapsNet(input_shape=mnist.IMAGE_SHAPE, n_class=mnist.CLASSES, routings=CAPSNET_ROUTINGS)
-        if dataset == 'cifar' and network_type == 'capsnet_single_digit_capsule':
+        elif dataset == 'cifar' and network_type == 'capsnet_single_digit_capsule':
             from capsnet.singledigitcapsule.cifar_capsulenet import CapsNet
             model, _, _ = CapsNet(input_shape=cifar10.IMAGE_SHAPE, n_class=cifar10.CLASSES, routings=CAPSNET_ROUTINGS)
         elif dataset == 'cifar' and network_type == 'capsnet_two_digits_capsules':
@@ -42,8 +43,13 @@ def evaluate(dataset, network_type, weights):
             print('ERROR! Unsupported CapsNet type!')
             exit(1)
     elif network_type == 'cnn':
-        from cnn.resnet import resnet_v2
-        model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=110)
+        if dataset == 'mnist':
+            from cnn.mnist_resnet import resnet_v2
+            model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=110)
+        elif dataset == 'cifar':
+            from cnn.cifar_resnet import resnet_v2
+            model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=110)
+        model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(lr=0.1), metrics=['accuracy'])
     else:
         print('ERROR! Unsupported Network Type!')
         exit(1)
