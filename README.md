@@ -372,9 +372,33 @@ Rotation: 165 Accuracy: 0.4376
 
 #### CapsNet with two Digit Layers
 
-Weights are available [here]().
+Weights are available [here](https://drive.google.com/open?id=1N_x-_5biKY0MaVLQvM71nmlruXdSn6Wy).
 
 ```
+Rotation: -180 Accuracy: 0.3968
+Rotation: -165 Accuracy: 0.405
+Rotation: -150 Accuracy: 0.3984
+Rotation: -135 Accuracy: 0.3422
+Rotation: -120 Accuracy: 0.26
+Rotation: -105 Accuracy: 0.182
+Rotation: -90 Accuracy: 0.1637
+Rotation: -75 Accuracy: 0.2363
+Rotation: -60 Accuracy: 0.3928
+Rotation: -45 Accuracy: 0.6486
+Rotation: -30 Accuracy: 0.8928
+Rotation: -15 Accuracy: 0.9803
+Rotation: 0 Accuracy: 0.9913
+Rotation: 15 Accuracy: 0.9726
+Rotation: 30 Accuracy: 0.8099
+Rotation: 45 Accuracy: 0.5073
+Rotation: 60 Accuracy: 0.2289
+Rotation: 75 Accuracy: 0.1222
+Rotation: 90 Accuracy: 0.134
+Rotation: 105 Accuracy: 0.2024
+Rotation: 120 Accuracy: 0.2806
+Rotation: 135 Accuracy: 0.3336
+Rotation: 150 Accuracy: 0.3734
+Rotation: 165 Accuracy: 0.3965
 ```
 
 #### Resnet 110
