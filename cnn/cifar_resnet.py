@@ -209,15 +209,16 @@ def resnet_v2(input_shape, depth, num_classes=10):
     model = keras.Model(inputs=inputs, outputs=outputs)
     return model
 
-model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=depth)
-
-model.compile(loss='categorical_crossentropy',
-              optimizer=keras.optimizers.Adam(lr=lr_schedule(0)),
-              metrics=['accuracy'])
-model.summary()
-print(model_type)
 
 if __name__ == '__main__':
+    model = resnet_v2(input_shape=cifar10.IMAGE_SHAPE, depth=depth)
+
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=keras.optimizers.Adam(lr=lr_schedule(0)),
+                  metrics=['accuracy'])
+    model.summary()
+    print(model_type)
+
     # Prepare model model saving directory.
     save_dir = os.path.join(os.getcwd(), 'saved_models')
     model_name = 'cifar10_%s_model.{epoch:03d}.h5' % model_type

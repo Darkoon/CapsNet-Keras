@@ -13,6 +13,8 @@ from tensorflow import keras
 from dataset import cifar10
 
 CAPSNET_ROUTINGS = 3  # TODO: Allow to override it!
+ROTATIONS = [-180, -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15,
+             0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165]
 
 
 def evaluate(dataset, network_type, weights):
@@ -57,7 +59,7 @@ def evaluate(dataset, network_type, weights):
     model.summary()
     model.load_weights(weights)
 
-    for rotation in [-180, -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165]:
+    for rotation in ROTATIONS:
         if 'capsnet' in network_type:
             x_test, y_test = dataset_module.get_test_data_for_capsnet(rotation)
             y_pred, x_reconstructed = model.predict(x_test, batch_size=100)
