@@ -4,10 +4,10 @@ The current version maybe only works for TensorFlow backend. Actually it will be
 Adopting to other backends should be easy, but I have not tested this. 
 
 Usage:
-       python capsulenet.py
-       python capsulenet.py --epochs 50
-       python capsulenet.py --epochs 50 --routings 3
-       python capsulenet.py --primary_capsules=32 --number_of_primary_channels=16 --digit_capsules=16
+       python capsnet/twodigitcapsules/cifar_capsulenet.py
+       python capsnet/twodigitcapsules/cifar_capsulenet.py --epochs 50
+       python capsnet/twodigitcapsules/cifar_capsulenet.py --epochs 50 --routings 3
+       python capsnet/twodigitcapsules/cifar_capsulenet.py --primary_capsules=32 --number_of_primary_channels=16 --digit_capsules=16
        ... ...
        
 Result:
@@ -27,8 +27,8 @@ from tensorflow import keras
 from PIL import Image
 
 from dataset import cifar10
-from capsnet.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
-from capsnet.utils import combine_images, plot_log
+from capsnet.twodigitcapsules.capsulelayers import CapsuleLayer, PrimaryCap, Length, Mask
+from capsnet.twodigitcapsules.utils import combine_images, plot_log
 
 keras.backend.set_image_data_format('channels_last')
 
@@ -45,12 +45,15 @@ def CapsNet(input_shape, n_class, routings, primary_capsules=16, number_of_prima
     x = keras.layers.Input(shape=input_shape)
 
     # Layer 1: Just a conventional Conv2D layer
-    conv1 = keras.layers.Conv2D(filters=256, kernel_size=9, strides=2, padding='valid', name='conv1', kernel_regularizer=keras.regularizers.l2(1.e-4))(x)
+    conv1 = keras.layers.Conv2D(filters=256, kernel_size=5, strides=2, padding='valid', name='conv1', kernel_regularizer=keras.regularizers.l2(1.e-4))(x)
     norm = keras.layers.BatchNormalization(axis=3)(conv1)
     conv1 = keras.layers.Activation('relu')(norm)
 
     # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
-    primarycaps = PrimaryCap(conv1, dim_capsule=primary_capsules, n_channels=number_of_primary_channels, kernel_size=9, strides=2, padding='valid')
+    primarycaps = PrimaryCap(conv1, dim_capsule=32, n_channels=16, kernel_size=5, strides=2, padding='valid')
+
+    # Layer 2: Conv2D layer with `squash` activation, then reshape to [None, num_capsule, dim_capsule]
+    primarycaps = PrimaryCap(primarycaps, dim_capsule=32, n_channels=16, kernel_size=5, strides=2, padding='valid', do_reshape=True)
 
     # Layer 3: Capsule layer. Routing algorithm works here.
     digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=digit_capsules, routings=routings, name='digitcaps')(primarycaps)
